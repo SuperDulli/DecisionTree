@@ -11,7 +11,7 @@ const trainingData = [
   [true, true, false, false, true, true],
   [true, false, true, false, true, false],
   [true, true, true, true, true, true],
-  [false, false, true, true, false, true],
+  [false, true, true, true, false, true],
   [false, false, false, true, true, false],
   [false, false, false, true, false, true],
   [false, true, false, true, false, true],
@@ -91,7 +91,7 @@ function entropy(rows) {
   let entrp = 0;
   for (let label in counts) {
     let lblProp = counts[label] / rows.length;
-    entrp += entropy2(lblProp);
+    entrp += lblProp * entropy2(lblProp);
   }
   return -entrp;
 }
@@ -101,7 +101,7 @@ const entropy2 = prop => {
   return prop * Math.log2(prop) + (1 - prop) * Math.log2((1 - prop));
 };
 
-function infoGain(left, right, currentUncetainty) {
+function infoGain(left, right, currentUncertainty) {
   /*
   Information Gain.
 
@@ -109,16 +109,16 @@ function infoGain(left, right, currentUncetainty) {
      two child nodes.
   */
   let p = left.length / (left.length + right.length);
-  return currentUncetainty - p * entropy(left) - (1 - p) * entropy(right);
+  return currentUncertainty - p * entropy(left) - (1 - p) * entropy(right);
 }
 
 function findBestSplit(rows) {
   let bestGain = 0;
   let bestQuestion = null;
-  let currentUncetainty = entropy(rows);
+  let currentUncertainty = entropy(rows);
   let n = rows.length - 1;
 
-  for (let col = 1; col < rows.length; col++) { //for each feature
+  for (let col = 1; col < rows[0].length; col++) { //for each feature
     let values = [];
     for (let row of rows) values.push(row[col]);
     values = values.filter(onlyUnique);
@@ -131,8 +131,7 @@ function findBestSplit(rows) {
       //skip if it doesn't divide it
       if (trueRows.length == 0 || falseRows.length == 0) continue;
 
-      let gain = infoGain(trueRows, falseRows, currentUncetainty);
-      console.log(gain);
+      let gain = infoGain(trueRows, falseRows, currentUncertainty);
       if (gain >= bestGain) {
         bestGain = gain;
         bestQuestion = question;
@@ -150,6 +149,7 @@ function onlyUnique(value, index, self) {
 
 function buildTree(rows) {
   let bestSplit = findBestSplit(rows);
+  console.log(bestSplit);
   let gain = bestSplit.bestGain, question = bestSplit.bestQuestion;
 
   if (gain == 0) return new Leaf(rows);
