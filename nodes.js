@@ -25,11 +25,12 @@ class Node {
 
 class Branch {
 
-  constructor(start, end, label, arrowSize) {
+  constructor(start, end, label, arrowSize, color) {
     this.start = start;
     this.end = end;
     this.label = label;
     this.arrowSize = arrowSize;
+	this.color = color;
   }
 
   show() {
@@ -40,6 +41,7 @@ class Branch {
     line(0, 0, this.end.x, this.end.y);
     rotate(this.end.heading());
     translate(this.end.mag() - this.arrowSize - 100, 0);
+	fill(this.color);
     triangle(0, this.arrowSize / 2, 0, -this.arrowSize / 2, this.arrowSize, 0);
     pop();
   }
@@ -77,9 +79,10 @@ class DecisionNode extends Node {
     super.show();
 
     // true branch
+    let c = color(0, 255, 0);
     let vec = createVector(0, 200);
 
-    let tb = new Branch(createVector(0,0), vec.rotate(QUARTER_PI), "true", 10);
+    let tb = new Branch(createVector(0,0), vec.rotate(QUARTER_PI), "true", 10, c);
     tb.show();
     push();
     translate(vec.x, vec.y);
@@ -94,7 +97,8 @@ class DecisionNode extends Node {
 
 
     // false Branch
-    let fb = new Branch(createVector(0,0), vec.rotate(-HALF_PI), "false", 10);
+    c = color(255, 0, 0);
+    let fb = new Branch(createVector(0,0), vec.rotate(-HALF_PI), "false", 10, c);
     fb.show();
     push();
     translate(vec.x, vec.y);

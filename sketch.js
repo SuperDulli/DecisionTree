@@ -56,6 +56,8 @@ function setup() {
 function draw() {
   background(220);
   translate(width / 2, 50);
+  fill(0);
+  text("Do you like the module?", -300, 5);
   tree.show();
 }
 
